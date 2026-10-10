@@ -40,10 +40,10 @@ if (galleryDialog) {
         { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628330/7e9e71bd-2b4f-4e76-836c-6f781a85b81d.png', alt: 'LOMBA LOGO INDONESIA SIPF', caption: 'KONFIGURASI LOGO' },
         { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628358/1eb1e9bb-39b4-4890-84ae-6e7b46c86bc6.png', alt: 'FILOSOFI LOGO INDONESIA SIPF', caption: 'FILOSOFI' },
         { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628316/a4201025-2d0b-4885-8bf9-c7afd9a73b5a.png', alt: 'LOGO PERPUSDA BANTEN', caption: 'LOGO UTAMA' },
-         { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628278/d7d9d544-bf60-4426-9ec2-3c13645b8e98.png', alt: 'FILOSOFI LOGO PERPUSDA BANTEN', caption: 'FILOSOFI' },
-          { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628614/f256a16d-4df4-4226-81b5-977821b4f92b.png', alt: 'LOGO UNSERA EKSIS', caption: 'LOGO' },
-           { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628696/da510503-abc2-43f4-af3c-2ffcb2b967ea.png', alt: 'FILOSOFI UNSERA EKSIS', caption: 'FILOSOFI' },
-            { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628749/66b4e938-a263-4c5c-9727-28a4e0a20a52.png', alt: 'LOGO UNSERA EKSIS', caption: 'LOGO' },
+        { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628278/d7d9d544-bf60-4426-9ec2-3c13645b8e98.png', alt: 'FILOSOFI LOGO PERPUSDA BANTEN', caption: 'FILOSOFI' },
+        { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628614/f256a16d-4df4-4226-81b5-977821b4f92b.png', alt: 'LOGO UNSERA EKSIS', caption: 'LOGO' },
+        { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628696/da510503-abc2-43f4-af3c-2ffcb2b967ea.png', alt: 'FILOSOFI UNSERA EKSIS', caption: 'FILOSOFI' },
+        { src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791628749/66b4e938-a263-4c5c-9727-28a4e0a20a52.png', alt: 'LOGO UNSERA EKSIS', caption: 'LOGO' },
       ],
     },
     cerita: {
@@ -72,21 +72,33 @@ if (galleryDialog) {
   const renderGallerySlide = (index) => {
     activeIndex = (index + activeSlides.length) % activeSlides.length;
     const slide = activeSlides[activeIndex];
-    galleryImage.classList.remove('is-zoomed');
+    galleryImage.classList.remove('is-zoomed', 'slide-in');
     galleryImage.parentElement.classList.remove('is-zoomed');
     galleryImage.setAttribute('aria-pressed', 'false');
     galleryImage.setAttribute('aria-label', 'Perbesar foto');
-    galleryImage.classList.remove('slide-in');
-    void galleryImage.offsetWidth;
-    galleryImage.src = slide.src;
-    galleryImage.alt = slide.alt;
-    galleryImage.classList.add('slide-in');
     galleryCaption.textContent = slide.caption;
     galleryCount.textContent = `${activeIndex + 1} / ${activeSlides.length}`;
     galleryDots.querySelectorAll('button').forEach((dot, dotIndex) => {
       dot.classList.toggle('active', dotIndex === activeIndex);
       dot.setAttribute('aria-current', dotIndex === activeIndex ? 'true' : 'false');
     });
+    // Show loading shimmer, hide stale image
+    galleryImage.style.opacity = '0';
+    galleryImage.parentElement.classList.add('is-loading');
+    const img = new Image();
+    img.onload = () => {
+      galleryImage.src = slide.src;
+      galleryImage.alt = slide.alt;
+      galleryImage.parentElement.classList.remove('is-loading');
+      galleryImage.classList.add('slide-in');
+      void galleryImage.offsetWidth;
+      galleryImage.style.opacity = '';
+    };
+    img.onerror = () => {
+      galleryImage.parentElement.classList.remove('is-loading');
+      galleryImage.style.opacity = '';
+    };
+    img.src = slide.src;
   };
 
   document.querySelectorAll('.gallery-trigger').forEach((trigger) => {
@@ -186,21 +198,33 @@ if (organizationDialog) {
   const renderOrganizationSlide = (index) => {
     organizationIndex = (index + organizationSlides.length) % organizationSlides.length;
     const slide = organizationSlides[organizationIndex];
-    organizationImage.classList.remove('is-zoomed');
+    organizationImage.classList.remove('is-zoomed', 'slide-in');
     organizationImage.parentElement.classList.remove('is-zoomed');
     organizationImage.setAttribute('aria-pressed', 'false');
     organizationImage.setAttribute('aria-label', 'Perbesar foto');
-    organizationImage.classList.remove('slide-in');
-    void organizationImage.offsetWidth;
-    organizationImage.src = slide.src;
-    organizationImage.alt = slide.alt;
-    organizationImage.classList.add('slide-in');
     organizationCaption.textContent = slide.caption;
     organizationCount.textContent = `${organizationIndex + 1} / ${organizationSlides.length}`;
     organizationDots.querySelectorAll('button').forEach((dot, dotIndex) => {
       dot.classList.toggle('active', dotIndex === organizationIndex);
       dot.setAttribute('aria-current', dotIndex === organizationIndex ? 'true' : 'false');
     });
+    // Show loading shimmer, hide stale image
+    organizationImage.style.opacity = '0';
+    organizationImage.parentElement.classList.add('is-loading');
+    const img = new Image();
+    img.onload = () => {
+      organizationImage.src = slide.src;
+      organizationImage.alt = slide.alt;
+      organizationImage.parentElement.classList.remove('is-loading');
+      organizationImage.classList.add('slide-in');
+      void organizationImage.offsetWidth;
+      organizationImage.style.opacity = '';
+    };
+    img.onerror = () => {
+      organizationImage.parentElement.classList.remove('is-loading');
+      organizationImage.style.opacity = '';
+    };
+    img.src = slide.src;
   };
 
   document.querySelectorAll('.org-gallery-trigger').forEach((trigger) => {
@@ -264,7 +288,7 @@ const certificateDialog = document.querySelector('#certificate-viewer');
 if (certificateDialog) {
   const certificates = {
     'ux-design': { title: 'JUNIOR WEB PROGRAMMER', issuer: 'BNSP · LSP-UNSERA', src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791632063/34d1f52c-f9f8-42db-b7c0-80d952ffafa9.png' },
-     'DISKOMINFO': { title: 'Divisi E-Government', issuer: 'MAGANG · DISKOMINFO KOTA SERANG', src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791631800/2cbeec7a-c534-4d67-b6a7-a79f28be1fd3.png' },
+    'DISKOMINFO': { title: 'Divisi E-Government', issuer: 'MAGANG · DISKOMINFO KOTA SERANG', src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791631800/2cbeec7a-c534-4d67-b6a7-a79f28be1fd3.png' },
     'MIKROTIK': { title: 'BASIC MIKROTIK TRAINING', issuer: 'MAGANG · S4DULURNET', src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791631905/6123b10d-3481-4461-9f43-fcac9c058b5c.png' },
     'UKOM': { title: 'CREAT WEB-BASED HOTEL BOOKING APPLICATION', issuer: 'TELKOM AKSES · SMKN 6 PANDEGLANG', src: 'https://res.cloudinary.com/aqry5h7i/image/upload/v1791631874/26e79d65-0b70-46ee-81dc-98d58db7dcce.png' },
   };
@@ -282,27 +306,34 @@ if (certificateDialog) {
       const certificate = certificates[trigger.dataset.certificate];
       certificateTitle.textContent = certificate.title;
       certificateIssuer.textContent = certificate.issuer;
+      // Reset state: hide image, show loading spinner
       certificateImage.hidden = true;
+      certificateImage.src = '';
       certificateImage.classList.remove('is-zoomed');
       certificateImage.parentElement.classList.remove('is-zoomed');
       certificateImage.setAttribute('aria-pressed', 'false');
       certificateImage.setAttribute('aria-label', 'Perbesar foto sertifikat');
-      certificateDialog.querySelector('.certificate-empty').hidden = false;
-      emptyMessage.textContent = 'Foto sertifikat belum tersedia';
-      emptyHint.textContent = `Tambahkan file ${certificate.src} ke folder proyek.`;
+      const certEmpty = certificateDialog.querySelector('.certificate-empty');
+      certEmpty.hidden = false;
+      certEmpty.classList.add('is-loading');
+      emptyMessage.textContent = 'Memuat sertifikat...';
+      emptyHint.textContent = '';
       certificateDialog.showModal();
       closeCertificate.focus();
 
-      certificateImage.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        certificateImage.src = certificate.src;
         certificateImage.hidden = false;
-        certificateDialog.querySelector('.certificate-empty').hidden = true;
+        certEmpty.hidden = true;
+        certEmpty.classList.remove('is-loading');
       };
-      certificateImage.onerror = () => {
-        certificateImage.hidden = true;
-        certificateDialog.querySelector('.certificate-empty').hidden = false;
+      img.onerror = () => {
+        certEmpty.classList.remove('is-loading');
+        emptyMessage.textContent = 'Foto sertifikat tidak dapat dimuat';
+        emptyHint.textContent = 'Periksa koneksi internet Anda dan coba lagi.';
       };
-      certificateImage.src = certificate.src;
-      if (certificateImage.complete && certificateImage.naturalWidth > 0) certificateImage.onload();
+      img.src = certificate.src;
     });
   });
 
@@ -357,3 +388,106 @@ if (profilePhoto) {
 }
 
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+// ─── Contact Form ────────────────────────────────────────────────
+// Ganti URL di bawah dengan Web App URL hasil deploy Google Apps Script Anda
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKwYYsuMzejEKwXij7WqdwqH-6fWHB6No1fEcvxTRkPdv30B7GxeglCY8KizKTTUVMBQ/exec';
+
+const contactForm = document.querySelector('#contact-form');
+if (contactForm) {
+  const submitBtn = contactForm.querySelector('#cf-submit');
+  const statusBox = contactForm.querySelector('#form-status');
+  const inputs = {
+    nama: { el: contactForm.querySelector('#cf-nama'), err: contactForm.querySelector('#err-nama') },
+    email: { el: contactForm.querySelector('#cf-email'), err: contactForm.querySelector('#err-email') },
+    pesan: { el: contactForm.querySelector('#cf-pesan'), err: contactForm.querySelector('#err-pesan') },
+  };
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  const clearError = (field) => {
+    inputs[field].el.classList.remove('is-invalid');
+    inputs[field].err.textContent = '';
+  };
+  const setError = (field, msg) => {
+    inputs[field].el.classList.add('is-invalid');
+    inputs[field].err.textContent = msg;
+  };
+
+  // Hapus error saat pengguna mulai mengetik
+  Object.keys(inputs).forEach((key) => {
+    inputs[key].el.addEventListener('input', () => clearError(key));
+  });
+
+  const validate = () => {
+    let ok = true;
+    const nama = inputs.nama.el.value.trim();
+    const email = inputs.email.el.value.trim();
+    const pesan = inputs.pesan.el.value.trim();
+
+    if (!nama) { setError('nama', 'Nama tidak boleh kosong.'); ok = false; }
+    else clearError('nama');
+
+    if (!email) { setError('email', 'Email tidak boleh kosong.'); ok = false; }
+    else if (!EMAIL_RE.test(email)) { setError('email', 'Format email tidak valid.'); ok = false; }
+    else clearError('email');
+
+    if (!pesan) { setError('pesan', 'Pesan tidak boleh kosong.'); ok = false; }
+    else if (pesan.length < 10) { setError('pesan', 'Pesan terlalu singkat (min. 10 karakter).'); ok = false; }
+    else clearError('pesan');
+
+    return ok;
+  };
+
+  const setStatus = (type, msg) => {
+    statusBox.className = 'form-status';
+    statusBox.textContent = '';
+    if (type) {
+      void statusBox.offsetWidth; // reflow for animation
+      statusBox.classList.add(type === 'success' ? 'is-success' : 'is-error');
+      statusBox.textContent = msg;
+    }
+  };
+
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setStatus(null, '');
+    if (!validate()) return;
+
+    // Pastikan URL sudah diisi
+    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('GANTI')) {
+      setStatus('error', '⚠ URL Google Apps Script belum dikonfigurasi. Ikuti panduan setup terlebih dahulu.');
+      return;
+    }
+
+    // Loading state
+    submitBtn.disabled = true;
+    submitBtn.classList.add('is-loading');
+
+    const params = new URLSearchParams({
+      nama: inputs.nama.el.value.trim(),
+      email: inputs.email.el.value.trim(),
+      pesan: inputs.pesan.el.value.trim(),
+    });
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString(),
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        setStatus('success', '✓ Pesan berhasil dikirim! Saya akan menghubungi Anda segera.');
+        contactForm.reset();
+      } else {
+        setStatus('error', `✕ Gagal mengirim: ${data.message || 'Coba lagi nanti.'}`);
+      }
+    } catch {
+      setStatus('error', '✕ Koneksi gagal. Periksa internet Anda dan coba lagi.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('is-loading');
+    }
+  });
+}
