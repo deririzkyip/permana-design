@@ -391,7 +391,7 @@ document.querySelector('#year').textContent = new Date().getFullYear();
 
 // ─── Contact Form ────────────────────────────────────────────────
 // Ganti URL di bawah dengan Web App URL hasil deploy Google Apps Script Anda
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKwYYsuMzejEKwXij7WqdwqH-6fWHB6No1fEcvxTRkPdv30B7GxeglCY8KizKTTUVMBQ/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ1n-zJGPK_mQZTEk4Eg8vZSkfIlLuJAQQekcVgqLM-fSvZpk7Pe-fKGAEkcO26VcPKQ/exec';
 
 const contactForm = document.querySelector('#contact-form');
 if (contactForm) {
@@ -464,25 +464,23 @@ if (contactForm) {
     submitBtn.disabled = true;
     submitBtn.classList.add('is-loading');
 
-    const params = new URLSearchParams({
+    const payload = JSON.stringify({
       nama: inputs.nama.el.value.trim(),
       email: inputs.email.el.value.trim(),
       pesan: inputs.pesan.el.value.trim(),
     });
 
     try {
-      const res = await fetch(APPS_SCRIPT_URL, {
+      await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params.toString(),
+        mode: 'no-cors',
+        // text/plain = simple request, tidak memicu CORS preflight
+        // GAS membaca via e.postData.contents
+        body: payload,
       });
-      const data = await res.json();
-      if (data.status === 'success') {
-        setStatus('success', '✓ Pesan berhasil dikirim! Saya akan menghubungi Anda segera.');
-        contactForm.reset();
-      } else {
-        setStatus('error', `✕ Gagal mengirim: ${data.message || 'Coba lagi nanti.'}`);
-      }
+      // no-cors → opaque response, asumsikan sukses jika tidak ada exception
+      setStatus('success', '✓ Pesan berhasil dikirim! Saya akan menghubungi Anda segera.');
+      contactForm.reset();
     } catch {
       setStatus('error', '✕ Koneksi gagal. Periksa internet Anda dan coba lagi.');
     } finally {
